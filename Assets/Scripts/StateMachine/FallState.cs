@@ -6,13 +6,13 @@ public class FallState : IState
     public void OnEnter(Enemy enemy)
     {
         timer = 0;
-
+        enemy.Falling();
     }
 
     public void OnExecute(Enemy enemy)
     {
         timer += Time.deltaTime;
-        if (timer >= 3f)
+        if (timer > 3f)
         {
             enemy.ChangeState(new CollectState());
         }

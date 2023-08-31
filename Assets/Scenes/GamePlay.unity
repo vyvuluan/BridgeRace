@@ -610,6 +610,61 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 26ad1c7cf94bdef449f205424c6ca743, type: 2}
   - {fileID: 2100000, guid: 465e82426fee9884eb403a76604aaf30, type: 2}
   bricks: []
+--- !u!1 &1761714125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1761714127}
+  - component: {fileID: 1761714126}
+  m_Layer: 0
+  m_Name: '@GameManager'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1761714126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1761714125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5242398fff8e3d745be93a8e00bb28d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  materialColors:
+  - color: 0
+    material: {fileID: 2100000, guid: aa2ab845fd257d746a9f09c1fa9360c3, type: 2}
+  - color: 1
+    material: {fileID: 2100000, guid: 54cb73f6c0d7c054594640ffe852e629, type: 2}
+  - color: 2
+    material: {fileID: 2100000, guid: 5a8ab54474dd0eb45916153c13d6de24, type: 2}
+  - color: 3
+    material: {fileID: 2100000, guid: 26ad1c7cf94bdef449f205424c6ca743, type: 2}
+  - color: 4
+    material: {fileID: 2100000, guid: 465e82426fee9884eb403a76604aaf30, type: 2}
+--- !u!4 &1761714127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1761714125}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1806412508
 GameObject:
   m_ObjectHideFlags: 0

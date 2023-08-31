@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,8 +12,6 @@ public class Enemy : Character
     private bool isFind = true;
     private IState currentState;
     private Vector3 currentTarget;
-
-
     private void OnDrawGizmos()
     {
         Gizmos.color = UnityEngine.Color.yellow;
@@ -20,7 +19,15 @@ public class Enemy : Character
     }
     private void Update()
     {
-        Debug.Log(gameObject.name + ": " + currentState);
+        if (bricks.Count >= 5)
+        {
+            rb.isKinematic = false;
+        }
+        else
+        {
+            rb.isKinematic = true;
+        }
+        currentState?.OnExecute(this);
         if (isFind)
         {
             isFind = false;
@@ -39,8 +46,8 @@ public class Enemy : Character
             }
             ChangeState(new CollectState());
 
+
         }
-        currentState?.OnExecute(this);
     }
     public override void Control()
     {
@@ -54,32 +61,48 @@ public class Enemy : Character
     }
     public void Moving()
     {
-        agent.destination = currentTarget;
         ChangeAnim(Constants.RunAnim);
+        agent.destination = currentTarget;
     }
-    public void Falling(Transform rival)
+    public void Falling()
     {
         isFind = false;
-        Vector3 direction = (rival.transform.position - transform.position).normalized;
         ChangeAnim(Constants.FallAnim);
         agent.enabled = false;
-        //ApplyKnockback(direction);
+        foreach (var brick in bricks)
+        {
+            Vector3 temp = brick.transform.position;
+            temp.x += Random.Range(0f, 1.5f);
+            temp.z += Random.Range(0f, 1.5f);
+            brick.transform.DOMove(temp, 0.3f).OnComplete(() =>
+            {
+                temp.y = 2.5f;
+                brick.transform.DOMove(temp, 0.4f).SetEase(Ease.OutBounce).OnComplete(() =>
+                {
+                    brick.transform.SetParent(null);
+                    brick.SetMaterial(GameManager.Instance.GetMaterial(BrickColor.Grey));
+                    brick.Color = BrickColor.Grey;
+                });
+            });
+        }
+        bricks.Clear();
     }
     public void Respawn()
     {
-        isFind = true;
-        agent.enabled = true;
         ChangeAnim(Constants.RespawnAnim);
         Invoke(nameof(ResetIdle), 1f);
     }
     public void ResetIdle()
     {
         ChangeAnim(Constants.IdleAnim);
+        isFind = true;
+        agent.enabled = true;
     }
     public void SetMaterial(Material material)
     {
         meshRenderer.material = material;
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(Constants.BrickTag))
@@ -92,17 +115,12 @@ public class Enemy : Character
                 isFind = true;
             }
         }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag(Constants.PlayerTag))
+        if (other.CompareTag(Constants.PlayerTag))
         {
-            Debug.Log("luan");
-            Falling(collision.transform);
-            ChangeState(new FallState());
+            if (bricks.Count < other.GetComponent<Character>().GetLengthBrick())
+            {
+                ChangeState(new FallState());
+            }
         }
     }
-
-
 }

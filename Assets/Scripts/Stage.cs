@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Stage : MonoBehaviour
@@ -49,9 +48,4 @@ public class Stage : MonoBehaviour
             }
         }
     }
-    public List<Brick> FindBrickByColor(BrickColor color)
-    {
-        return bricks.Where(n => n.Color == color).ToList();
-    }
-
 }
