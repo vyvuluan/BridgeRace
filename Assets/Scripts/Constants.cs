@@ -7,13 +7,12 @@ public static class Constants
     public const string RunAnim = "run";
     public const string JumpAnim = "jump";
     public const string FallAnim = "fall";
+    public const string RespawnAnim = "respawn";
     public const string ThrowAnim = "throw";
 
     //Tag
     public const string BrickTag = "Brick";
     public const string PlayerTag = "Player";
-    public const string DeathZoneTag = "DeathZone";
-    public const string EnemyWallTag = "EnemyWall";
     public const string EnemyTag = "Enemy";
 
     //PlayerPrefs

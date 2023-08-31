@@ -7,20 +7,12 @@ public class Enemy : Character
 {
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private SkinnedMeshRenderer meshRenderer;
-    [SerializeField] private BrickColor color;
     [SerializeField] private LayerMask brickLayer;
-    [SerializeField] private List<Brick> targets;
-    private bool isFind = false;
+    private bool isFind = true;
     private IState currentState;
     private Vector3 currentTarget;
 
-    public BrickColor Color { get => color; set => color = value; }
 
-    private void Start()
-    {
-        targets = base.GetStageCurrent().FindBrickByColor(color);
-
-    }
     private void OnDrawGizmos()
     {
         Gizmos.color = UnityEngine.Color.yellow;
@@ -28,13 +20,13 @@ public class Enemy : Character
     }
     private void Update()
     {
-        if (!isFind)
+        Debug.Log(gameObject.name + ": " + currentState);
+        if (isFind)
         {
-            isFind = true;
+            isFind = false;
             List<Collider> colliders = Physics.OverlapSphere(transform.position, 10.0f, brickLayer).ToList();
             colliders = colliders.Where(n => n.GetComponent<Brick>().Color == color).ToList();
             currentTarget = colliders[0].transform.position;
-            Debug.Log(colliders[0].transform.position);
             float distance = Vector3.Distance(transform.position, colliders[0].transform.position);
             for (int i = 1; i < colliders.Count; i++)
             {
@@ -62,9 +54,27 @@ public class Enemy : Character
     }
     public void Moving()
     {
-        //Debug.Log(currentTarget);
         agent.destination = currentTarget;
         ChangeAnim(Constants.RunAnim);
+    }
+    public void Falling(Transform rival)
+    {
+        isFind = false;
+        Vector3 direction = (rival.transform.position - transform.position).normalized;
+        ChangeAnim(Constants.FallAnim);
+        agent.enabled = false;
+        //ApplyKnockback(direction);
+    }
+    public void Respawn()
+    {
+        isFind = true;
+        agent.enabled = true;
+        ChangeAnim(Constants.RespawnAnim);
+        Invoke(nameof(ResetIdle), 1f);
+    }
+    public void ResetIdle()
+    {
+        ChangeAnim(Constants.IdleAnim);
     }
     public void SetMaterial(Material material)
     {
@@ -77,10 +87,22 @@ public class Enemy : Character
             Brick brick = other.GetComponent<Brick>();
             if (brick.Color == color)
             {
+                base.AddBrick(brick);
                 other.GetComponent<Brick>().OnDespawn();
-                isFind = false;
+                isFind = true;
             }
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag(Constants.PlayerTag))
+        {
+            Debug.Log("luan");
+            Falling(collision.transform);
+            ChangeState(new FallState());
+        }
+    }
+
 
 }
