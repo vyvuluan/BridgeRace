@@ -14,12 +14,12 @@ public class FallState : IState
         timer += Time.deltaTime;
         if (timer > 3f)
         {
-            enemy.ChangeState(new CollectState());
+            enemy.Respawn();
+            timer = 0;
         }
     }
 
     public void OnExit(Enemy enemy)
     {
-        enemy.Respawn();
     }
 }
