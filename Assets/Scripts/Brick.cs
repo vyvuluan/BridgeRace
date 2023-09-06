@@ -16,12 +16,10 @@ public class Brick : MonoBehaviour
     public void OnDespawn()
     {
         gameObject.SetActive(false);
-        //SimplePool.Despawn(gameObject);
         Invoke(nameof(OnInit), 7f);
     }
     public void OnInit()
     {
         gameObject.SetActive(true);
-        //SimplePool.Spawn(gameObject, transform.position, transform.rotation);
     }
 }

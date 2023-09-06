@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class Stage : MonoBehaviour
 {
-    [SerializeField] private GameObject brickPrefab;
     [SerializeField] private Vector2Int size;
+    [SerializeField] private GameObject brickPrefab;
     [SerializeField] private List<Vector2Int> listCheckRandom = new();
     [SerializeField] private List<Material> brickColors;
     [SerializeField] private List<Brick> bricks = new();
+    [SerializeField] private List<Brige> briges;
     private Brick[,] brickTable;
     private void Start()
     {
@@ -48,4 +49,6 @@ public class Stage : MonoBehaviour
             }
         }
     }
+    public Brige GetBriges(int index) => briges[index];
+    public int RandomBrige() => Random.Range(0, briges.Count);
 }

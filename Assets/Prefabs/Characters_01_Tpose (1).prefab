@@ -131,11 +131,14 @@ MonoBehaviour:
   animator: {fileID: 1878534374843440486}
   stages: []
   bricks: []
-  agent: {fileID: 1878534374843440485}
-  meshRenderer: {fileID: 7035739940746362037}
   brickLayer:
     serializedVersion: 2
     m_Bits: 64
+  brickBrigeLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  agent: {fileID: 1878534374843440485}
+  meshRenderer: {fileID: 7035739940746362037}
 --- !u!136 &7727975867041225162
 CapsuleCollider:
   m_ObjectHideFlags: 0

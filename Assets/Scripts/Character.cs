@@ -8,7 +8,7 @@ public abstract class Character : MonoBehaviour
     [SerializeField] protected Transform balo;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] protected Animator animator;
-    [SerializeField] private List<Stage> stages;
+    [SerializeField] protected List<Stage> stages;
     [SerializeField] protected List<Brick> bricks;
     private string currentAnimName;
     protected int currentStage = 0;
