@@ -12,6 +12,8 @@ public class MaterialColor
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefabs;
+    [SerializeField] private GameObject playerPrefabs;
+    [SerializeField] private FloatingJoystick joystick;
     [SerializeField] private List<Stage> stages;
     [SerializeField] private List<Transform> startPoint;
     [SerializeField] private List<MaterialColor> materials;
@@ -20,9 +22,9 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        Spawn();
+        SpawnEnemy();
     }
-    public void Spawn()
+    public void SpawnEnemy()
     {
         for (int i = 0; i < quantity; i++)
         {
@@ -35,5 +37,15 @@ public class EnemySpawner : MonoBehaviour
             materials.RemoveAt(indexMaterial);
             enemies.Add(enemy);
         }
+
+    }
+    public void SpawnPlayer()
+    {
+        Player player = SimplePool.Spawn(playerPrefabs, startPoint[^1].position, playerPrefabs.transform.rotation).GetComponent<Player>();
+        player.SetMaterial(GameManager.Instance.GetMaterial(BrickColor.Blue));
+        player.SetStage(stages);
+        player.Color = BrickColor.Blue;
+        player.SetJoystick(joystick);
+        player.transform.SetParent(startPoint[^1]);
     }
 }

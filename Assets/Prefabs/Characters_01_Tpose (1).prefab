@@ -111,7 +111,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
-  m_WalkableMask: 4294967295
+  m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
 --- !u!114 &1878534374843440484
 MonoBehaviour:
@@ -129,6 +129,7 @@ MonoBehaviour:
   balo: {fileID: 999552906}
   rb: {fileID: 2791079562038892149}
   animator: {fileID: 1878534374843440486}
+  meshRenderer: {fileID: 7035739940746362037}
   stages: []
   bricks: []
   brickLayer:
@@ -138,7 +139,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   agent: {fileID: 1878534374843440485}
-  meshRenderer: {fileID: 7035739940746362037}
 --- !u!136 &7727975867041225162
 CapsuleCollider:
   m_ObjectHideFlags: 0

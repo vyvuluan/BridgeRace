@@ -8,7 +8,6 @@ public class Enemy : Character
     [SerializeField] private LayerMask brickLayer;
     [SerializeField] private LayerMask brickBrigeLayer;
     [SerializeField] private NavMeshAgent agent;
-    [SerializeField] private SkinnedMeshRenderer meshRenderer;
     private int indexBrige;
     private bool isFind = true;
     private bool isCheckCollision = true;
@@ -23,14 +22,21 @@ public class Enemy : Character
     }
     private void Start()
     {
-        indexBrige = stages[currentStage].RandomBrige();
-        brige = stages[currentStage].GetBriges(indexBrige);
+        SelectBrige();
+        stages[currentStage].SetActiveBrick(color, true);
+
 
     }
     private void Update()
     {
         currentState?.OnExecute(this);
         Control();
+        Debug.Log(currentTarget);
+    }
+    public void SelectBrige()
+    {
+        indexBrige = stages[currentStage].RandomBrige();
+        brige = stages[currentStage].GetBriges(indexBrige);
     }
     public override void Control()
     {
@@ -70,7 +76,7 @@ public class Enemy : Character
         {
             if (brige.GetBrickByIndex(i).Color == BrickColor.Grey || brige.GetBrickByIndex(i).Color != color)
             {
-                Destroy(bricks[bricks.Count - 1].gameObject);
+                Destroy(bricks[^1].gameObject);
                 bricks.RemoveAt(bricks.Count - 1);
                 brige.GetBrickByIndex(i).Color = color;
                 brige.GetBrickByIndex(i).SetMaterial(GameManager.Instance.GetMaterial(color));
@@ -85,6 +91,26 @@ public class Enemy : Character
             isBuild = false;
             ChangeState(new CollectState());
         }
+    }
+    public int CheckNextStage(int i)
+    {
+        if (i >= brige.GetCountBrickBrige())
+        {
+            return brige.CheckCompleteBuild(color) ? 1 : 0;
+        }
+        return 2;
+    }
+
+    public override void NextStage()
+    {
+        base.NextStage();
+        brige.NextStep();
+        isBuild = false;
+        isFind = true;
+        isCheckCollision = true;
+        SelectBrige();
+        //Invoke(nameof(WaitNextState), 1f);
+        ChangeState(new CollectState());
     }
     public void ChangeState(IState newState)
     {
@@ -113,10 +139,7 @@ public class Enemy : Character
         isFind = true;
         ChangeState(new CollectState());
     }
-    public void SetMaterial(Material material)
-    {
-        meshRenderer.material = material;
-    }
+
 
     private void OnTriggerEnter(Collider other)
     {

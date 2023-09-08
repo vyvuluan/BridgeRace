@@ -1,15 +1,15 @@
 using UnityEngine;
 
-public class CollectState : IState
+public class WinState : IState
 {
     public void OnEnter(Enemy enemy)
     {
-        enemy.Moving();
+        Debug.Log("WIN");
     }
 
     public void OnExecute(Enemy enemy)
     {
-        Debug.Log("collect");
+
     }
 
     public void OnExit(Enemy enemy)

@@ -8,6 +8,7 @@ public abstract class Character : MonoBehaviour
     [SerializeField] protected Transform balo;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] protected Animator animator;
+    [SerializeField] private SkinnedMeshRenderer meshRenderer;
     [SerializeField] protected List<Stage> stages;
     [SerializeField] protected List<Brick> bricks;
     private string currentAnimName;
@@ -27,6 +28,10 @@ public abstract class Character : MonoBehaviour
     {
         return bricks.Count;
     }
+    public void SetMaterial(Material material)
+    {
+        meshRenderer.material = material;
+    }
     public void AddBrick(Brick brick)
     {
         Brick brickNew = SimplePool.Spawn(brick.gameObject, brick.transform.position, brick.transform.rotation).GetComponent<Brick>();
@@ -36,10 +41,8 @@ public abstract class Character : MonoBehaviour
             brickNew.Color = color;
         }
         brickNew.gameObject.layer = 0;
-        //brickNew.gameObject.isStatic = false;
         brickNew.transform.SetParent(balo);
         brickNew.transform.SetLocalPositionAndRotation(bricks.Count == 0 ? Vector3.zero : new(0f, bricks[bricks.Count - 1].transform.localPosition.y + 0.5f, 0f), Quaternion.Euler(Vector3.zero));
-        //Debug.Log(brickNew.transform.position);
         bricks.Add(brickNew);
 
     }
@@ -72,6 +75,13 @@ public abstract class Character : MonoBehaviour
     protected Stage GetStageCurrent()
     {
         return stages[currentStage];
+    }
+    public virtual void NextStage()
+    {
+        stages[currentStage].SetActiveBrick(color, false);
+        currentStage++;
+        if (currentStage < stages.Count)
+            stages[currentStage].SetActiveBrick(color, true);
     }
     protected void ChangeAnim(string animName)
     {

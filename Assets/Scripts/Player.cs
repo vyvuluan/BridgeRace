@@ -5,6 +5,10 @@ public class Player : Character
     [SerializeField] private FloatingJoystick joystick;
     private Vector3 moveVector;
     private bool isControl = true;
+    private void Start()
+    {
+        stages[currentStage].SetActiveBrick(color, true);
+    }
     private void Update()
     {
         if (isControl)
@@ -28,6 +32,10 @@ public class Player : Character
             ChangeAnim(Constants.IdleAnim);
         }
         rb.MovePosition(rb.position + moveVector);
+    }
+    public void SetJoystick(FloatingJoystick floatingJoystick)
+    {
+        this.joystick = floatingJoystick;
     }
     public void Falling()
     {

@@ -662,6 +662,7 @@ MonoBehaviour:
   balo: {fileID: 4798756659186155149}
   rb: {fileID: 7215738379712405362}
   animator: {fileID: 6379769770763359329}
+  meshRenderer: {fileID: 2538732712260384178}
   stages:
   - {fileID: 0}
   bricks: []

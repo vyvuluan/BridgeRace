@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     private Dictionary<BrickColor, Material> colorDic = new();
 
 
-    void Start()
+    void Awake()
     {
         Instance = this;
         colorDic = materialColors.ToDictionary(n => n.Color, n => n.Material);
