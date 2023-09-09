@@ -9,6 +9,9 @@ public class Brige : MonoBehaviour
     [SerializeField] private Transform gateIn;
     [SerializeField] private Transform gateOut;
     [SerializeField] List<BrickBrige> brickBriges;
+    private bool isLock = false;
+    public List<BrickBrige> BrickBriges { get => brickBriges; }
+    public bool IsLock { get => isLock; }
 
     private void Start()
     {
@@ -29,13 +32,14 @@ public class Brige : MonoBehaviour
     }
     public BrickBrige GetBrickByIndex(int index) => brickBriges[index];
     public int GetCountBrickBrige() => brickBriges.Count;
-    public void OpenGate(Transform tf) => tf.DOMoveX(tf.position.x + 2f, 2f);
-    public void CloseGate(Transform tf) => tf.DOMoveX(tf.position.x - 2f, 2f);
     public bool CheckCompleteBuild(BrickColor brickColor) => brickBriges.All(n => n.Color == brickColor);
-    public void NextStep()
+    public void NextStep(BrickColor brickColor)
     {
         gateIn.DOMoveX(gateIn.position.x - 2.8f, 2f);
         gateOut.DOMoveX(gateOut.position.x + 2.8f, 2f);
+        gateIn.GetComponent<MeshRenderer>().material = GameManager.Instance.GetMaterial(brickColor);
+        gateOut.GetComponent<MeshRenderer>().material = GameManager.Instance.GetMaterial(brickColor);
+        isLock = true;
     }
 
 }

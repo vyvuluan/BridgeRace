@@ -9,6 +9,7 @@ public class Enemy : Character
     [SerializeField] private LayerMask brickBrigeLayer;
     [SerializeField] private NavMeshAgent agent;
     private int indexBrige;
+    private int randomNumber = 5;
     private bool isFind = true;
     private bool isCheckCollision = true;
     private bool isBuild = false;
@@ -31,13 +32,8 @@ public class Enemy : Character
     {
         currentState?.OnExecute(this);
         Control();
-        Debug.Log(currentTarget);
     }
-    public void SelectBrige()
-    {
-        indexBrige = stages[currentStage].RandomBrige();
-        brige = stages[currentStage].GetBriges(indexBrige);
-    }
+
     public override void Control()
     {
         if (isFind)
@@ -58,39 +54,72 @@ public class Enemy : Character
             }
 
         }
-        if (bricks.Count > 5 && !isBuild)
+
+        //Debug.Log(random);
+        if (bricks.Count > randomNumber && !isBuild)
         {
             isBuild = true;
             ChangeState(new BuildState());
         }
     }
-    public void BuildBrige(ref int i)
+    public override void NextStage()
     {
-        isFind = false;
-        isCheckCollision = false;
-
-        agent.SetDestination(brige.GetBrickByIndex(i).transform.position);
-        float distanceToDestination = agent.remainingDistance;
-
-        if (distanceToDestination < 0.1f)
+        base.NextStage();
+        if (currentStage < stages.Count)
         {
-            if (brige.GetBrickByIndex(i).Color == BrickColor.Grey || brige.GetBrickByIndex(i).Color != color)
-            {
-                Destroy(bricks[^1].gameObject);
-                bricks.RemoveAt(bricks.Count - 1);
-                brige.GetBrickByIndex(i).Color = color;
-                brige.GetBrickByIndex(i).SetMaterial(GameManager.Instance.GetMaterial(color));
-            }
-            i++;
-        }
-
-        if (bricks.Count <= 0)
-        {
+            brige.NextStep(color);
+            isBuild = false;
             isFind = true;
             isCheckCollision = true;
-            isBuild = false;
+            SelectBrige();
             ChangeState(new CollectState());
         }
+        else
+        {
+            brige.NextStep(color);
+            ChangeState(new WinState());
+        }
+    }
+    public void SelectBrige()
+    {
+        indexBrige = stages[currentStage].RandomBrige(color);
+        brige = stages[currentStage].GetBriges(indexBrige);
+    }
+    public void BuildBrige(ref int i)
+    {
+        if (!brige.IsLock)
+        {
+            isFind = false;
+            isCheckCollision = false;
+
+            agent.SetDestination(brige.GetBrickByIndex(i).transform.position);
+            float distanceToDestination = agent.remainingDistance;
+
+            if (distanceToDestination < 0.1f)
+            {
+                if (brige.GetBrickByIndex(i).Color == BrickColor.Grey || brige.GetBrickByIndex(i).Color != color)
+                {
+                    Destroy(bricks[^1].gameObject);
+                    bricks.RemoveAt(bricks.Count - 1);
+                    brige.GetBrickByIndex(i).Color = color;
+                    brige.GetBrickByIndex(i).SetMaterial(GameManager.Instance.GetMaterial(color));
+                }
+                i++;
+            }
+
+            if (bricks.Count <= 0)
+            {
+                isFind = true;
+                isCheckCollision = true;
+                isBuild = false;
+                ChangeState(new CollectState());
+            }
+        }
+        else
+        {
+            SelectBrige();
+        }
+
     }
     public int CheckNextStage(int i)
     {
@@ -100,18 +129,6 @@ public class Enemy : Character
         }
         return 2;
     }
-
-    public override void NextStage()
-    {
-        base.NextStage();
-        brige.NextStep();
-        isBuild = false;
-        isFind = true;
-        isCheckCollision = true;
-        SelectBrige();
-        //Invoke(nameof(WaitNextState), 1f);
-        ChangeState(new CollectState());
-    }
     public void ChangeState(IState newState)
     {
         currentState?.OnExit(this);
@@ -120,6 +137,8 @@ public class Enemy : Character
     }
     public void Moving()
     {
+        isCheckCollision = true;
+        randomNumber = Random.Range(5, 9);
         agent.enabled = true;
         ChangeAnim(Constants.RunAnim);
         agent.destination = currentTarget;

@@ -54,6 +54,21 @@ public class Stage : MonoBehaviour
     }
     public Brige GetBriges(int index) => briges[index];
     public int RandomBrige() => Random.Range(0, briges.Count);
+    public int RandomBrige(BrickColor color)
+    {
+        int result = 0;
+        int max = 0;
+        for (int i = 0; i < briges.Count; i++)
+        {
+            int temp = briges[i].BrickBriges.Count(n => n.Color == color);
+            if (max < temp)
+            {
+                max = temp;
+                result = i;
+            }
+        }
+        return result == 0 ? RandomBrige() : result;
+    }
     public void SetActiveBrick(BrickColor brickColor, bool status)
     {
         foreach (var item in bricks.Where(n => n.Color == brickColor))

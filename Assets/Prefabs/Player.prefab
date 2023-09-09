@@ -668,6 +668,12 @@ MonoBehaviour:
   bricks: []
   moveSpeed: 5
   joystick: {fileID: 0}
+  brickBrigeLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!54 &7215738379712405362
 Rigidbody:
   m_ObjectHideFlags: 0

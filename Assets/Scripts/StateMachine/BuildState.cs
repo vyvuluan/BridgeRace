@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class BuildState : IState
 {
     private int i;
@@ -10,12 +8,13 @@ public class BuildState : IState
 
     public void OnExecute(Enemy enemy)
     {
-        Debug.Log("build");
         switch (enemy.CheckNextStage(i))
         {
             //Not next stage
             case 0:
-                enemy.ChangeState(new CollectState());
+                if (enemy.GetLengthBrick() > 0)
+                    enemy.ChangeState(new BuildState());
+                else enemy.ChangeState(new CollectState());
                 break;
             //Next stage
             case 1:

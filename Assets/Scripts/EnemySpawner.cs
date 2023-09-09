@@ -23,6 +23,7 @@ public class EnemySpawner : MonoBehaviour
     private void Start()
     {
         SpawnEnemy();
+        SpawnPlayer();
     }
     public void SpawnEnemy()
     {
