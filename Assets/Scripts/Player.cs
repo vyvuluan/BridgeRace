@@ -9,11 +9,6 @@ public class Player : Character
     private Vector3 moveVector;
     private RaycastHit hit;
     private RaycastHit hitWall;
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = UnityEngine.Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, 0.5f);
-    }
     private void Start()
     {
         stages[currentStage].SetActiveBrick(color, true);
@@ -26,18 +21,15 @@ public class Player : Character
             BuildBrige();
         }
     }
-
     public override void Control()
     {
-        Vector3 direction = Vector3.zero;
         moveVector = Vector3.zero;
         moveVector.x = joystick.Horizontal * moveSpeed * Time.deltaTime;
         moveVector.z = joystick.Vertical * moveSpeed * Time.deltaTime;
         if (joystick.Horizontal != 0 || joystick.Vertical != 0)
         {
-            direction = Vector3.RotateTowards(transform.forward, moveVector, moveSpeed * Time.deltaTime, 0.0f);
+            Vector3 direction = Vector3.RotateTowards(transform.forward, moveVector, moveSpeed * Time.deltaTime, 0.0f);
             transform.rotation = Quaternion.LookRotation(direction);
-
             ChangeAnim(Constants.RunAnim);
         }
         else if (joystick.Horizontal == 0 || joystick.Vertical == 0)
@@ -52,9 +44,15 @@ public class Player : Character
         }
         else moveSpeed = 5f;
         Debug.DrawRay(transform.position, new Vector3(joystick.Horizontal, 0, joystick.Vertical), UnityEngine.Color.red);
-        Debug.Log("speed " + moveSpeed);
         rb.MovePosition(rb.position + moveVector);
-        //transform.position += moveVector;
+    }
+    public override void NextStage()
+    {
+        base.NextStage();
+        if (currentStage > stages.Count)
+        {
+            Debug.Log("Win");
+        }
     }
     public void BuildBrige()
     {
@@ -68,6 +66,15 @@ public class Player : Character
                 bricks.RemoveAt(bricks.Count - 1);
                 brickBrige.Color = color;
                 brickBrige.SetMaterial(GameManager.Instance.GetMaterial(color));
+
+                Brige brige = brickBrige.GetComponentInParent<Brige>();
+                if (brige.CheckCompleteBuild(color))
+                {
+                    brige.NextStep(color);
+                    NextStage();
+                }
+
+
             }
         }
     }
