@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Brick
+  - Param
   layers:
   - Default
   - TransparentFX

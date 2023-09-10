@@ -19,14 +19,23 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private List<MaterialColor> materials;
     [SerializeField] private List<Enemy> enemies;
     private int quantity = 3;
+    private BrickColor enemyColor;
+    private System.Action<Transform> onSetPlayer;
+
 
     private void Start()
     {
         SpawnEnemy();
-        SpawnPlayer();
+        SpawnPlayer(enemyColor);
+    }
+    public void Init(BrickColor brickColor, System.Action<Transform> onSetPlayer)
+    {
+        this.enemyColor = brickColor;
+        this.onSetPlayer = onSetPlayer;
     }
     public void SpawnEnemy()
     {
+        RemoveByColor(enemyColor);
         for (int i = 0; i < quantity; i++)
         {
             Enemy enemy = SimplePool.Spawn(enemyPrefabs, startPoint[i].position, enemyPrefabs.transform.rotation).GetComponent<Enemy>();
@@ -40,13 +49,25 @@ public class EnemySpawner : MonoBehaviour
         }
 
     }
-    public void SpawnPlayer()
+    public void SpawnPlayer(BrickColor color)
     {
         Player player = SimplePool.Spawn(playerPrefabs, startPoint[^1].position, playerPrefabs.transform.rotation).GetComponent<Player>();
-        player.SetMaterial(GameManager.Instance.GetMaterial(BrickColor.Blue));
+        player.SetMaterial(GameManager.Instance.GetMaterial(color));
         player.SetStage(stages);
-        player.Color = BrickColor.Blue;
+        player.Color = color;
         player.SetJoystick(joystick);
         player.transform.SetParent(startPoint[^1]);
+        onSetPlayer?.Invoke(player.transform);
+    }
+    public void RemoveByColor(BrickColor color)
+    {
+        foreach (var item in materials)
+        {
+            if (item.Color == color)
+            {
+                materials.Remove(item);
+                return;
+            }
+        }
     }
 }

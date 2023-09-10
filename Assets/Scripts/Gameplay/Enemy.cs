@@ -16,6 +16,9 @@ public class Enemy : Character
     private IState currentState;
     private Vector3 currentTarget;
     private Brige brige;
+
+    public bool IsBuild { get => isBuild; }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = UnityEngine.Color.yellow;
@@ -30,8 +33,13 @@ public class Enemy : Character
     }
     private void Update()
     {
+        if (currentState is BuildState && brige.IsLock)
+        {
+            transform.position = new(transform.position.x, transform.position.y, transform.position.z - 8f);
+        }
         currentState?.OnExecute(this);
         Control();
+
     }
 
     public override void Control()
@@ -64,13 +72,17 @@ public class Enemy : Character
     }
     public override void NextStage()
     {
-        base.NextStage();
-        if (currentStage < stages.Count)
+        if (currentStage < stages.Count - 1)
         {
             brige.NextStep(color);
+            stages[currentStage].RemoveBrigeByIsLock();
             isBuild = false;
             isFind = true;
             isCheckCollision = true;
+            Debug.Log("trc" + currentStage);
+            base.NextStage();
+            Debug.Log("sau" + currentStage);
+            //if (currentStage < stages.Count)
             SelectBrige();
             ChangeState(new CollectState());
         }
@@ -79,19 +91,25 @@ public class Enemy : Character
             brige.NextStep(color);
             ChangeState(new WinState());
         }
+
     }
     public void SelectBrige()
     {
-        indexBrige = stages[currentStage].RandomBrige(color);
-        brige = stages[currentStage].GetBriges(indexBrige);
+        if (stages[currentStage].GetLengthBrige() <= 0)
+        {
+            ChangeState(new FailState());
+        }
+        else
+        {
+            indexBrige = stages[currentStage].RandomBrige();
+            brige = stages[currentStage].GetBriges(indexBrige);
+        }
     }
     public void BuildBrige(ref int i)
     {
         if (!brige.IsLock)
         {
             isFind = false;
-            isCheckCollision = false;
-
             agent.SetDestination(brige.GetBrickByIndex(i).transform.position);
             float distanceToDestination = agent.remainingDistance;
 
@@ -137,7 +155,9 @@ public class Enemy : Character
     }
     public void Moving()
     {
+        isBuild = false;
         isCheckCollision = true;
+        isFind = true;
         randomNumber = Random.Range(5, 9);
         agent.enabled = true;
         ChangeAnim(Constants.RunAnim);
@@ -158,7 +178,11 @@ public class Enemy : Character
         isFind = true;
         ChangeState(new CollectState());
     }
-
+    public void Fail()
+    {
+        ChangeAnim(Constants.IdleAnim);
+        ChangeState(null);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -169,10 +193,13 @@ public class Enemy : Character
             {
                 AddBrick(brick);
                 other.GetComponent<Brick>().OnDespawn();
-                isFind = true;
+                if (currentState is CollectState)
+                {
+                    isFind = true;
+                }
             }
         }
-        if (other.CompareTag(Constants.PlayerTag) && isCheckCollision)
+        if (other.CompareTag(Constants.PlayerTag) && isCheckCollision && !isBuild)
         {
             if (bricks.Count < other.GetComponent<Character>().GetLengthBrick())
             {

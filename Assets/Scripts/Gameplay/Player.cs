@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 public class Player : Character
 {
@@ -49,9 +50,15 @@ public class Player : Character
     public override void NextStage()
     {
         base.NextStage();
-        if (currentStage > stages.Count)
+        if (currentStage >= stages.Count)
         {
             Debug.Log("Win");
+            isControl = false;
+            RemoveAllBrick();
+            transform.DOMoveZ(transform.position.z + 1f, 1f).OnComplete(() =>
+            {
+                ChangeAnim(Constants.WinAnim);
+            });
         }
     }
     public void BuildBrige()
@@ -112,7 +119,8 @@ public class Player : Character
         }
         if (other.CompareTag(Constants.PlayerTag) && isControl)
         {
-            if (bricks.Count < other.GetComponent<Character>().GetLengthBrick())
+            Enemy enemy = other.GetComponent<Enemy>();
+            if (bricks.Count < enemy.GetLengthBrick() && !enemy.IsBuild)
             {
                 Falling();
             }

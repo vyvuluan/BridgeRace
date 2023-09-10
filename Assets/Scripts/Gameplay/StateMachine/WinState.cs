@@ -1,10 +1,8 @@
-using UnityEngine;
-
 public class WinState : IState
 {
     public void OnEnter(Enemy enemy)
     {
-        Debug.Log("WIN");
+        GameView.Instance.GameOver();
     }
 
     public void OnExecute(Enemy enemy)

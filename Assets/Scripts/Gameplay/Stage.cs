@@ -20,18 +20,15 @@ public class Stage : MonoBehaviour
     private void SpawnBrick()
     {
         brickTable = new Brick[size.x, size.y];
-        //bricks = new();
         for (int i = 0; i < size.x; i++)
         {
             for (int j = 0; j < size.y; j++)
             {
-                //Vector3 pos = new(i * 1.5f, 0, j * -1.0f);
                 Vector3 pos = new(i, 0, j);
                 Brick brick = SimplePool.Spawn(brickPrefab, pos, brickPrefab.transform.rotation).GetComponent<Brick>();
-                brick.Index = new(i, j);
                 bricks.Add(brick);
                 brickTable[i, j] = brick;
-                listCheckRandom.Add(brick.Index);
+                listCheckRandom.Add(new(i, j));
                 brick.transform.SetParent(brickTransform, false);
             }
         }
@@ -53,27 +50,37 @@ public class Stage : MonoBehaviour
         }
     }
     public Brige GetBriges(int index) => briges[index];
-    public int RandomBrige() => Random.Range(0, briges.Count);
-    public int RandomBrige(BrickColor color)
+    public int GetLengthBrige() => briges.Count;
+    public int RandomBrigeIndex() => Random.Range(0, briges.Count);
+    public int RandomBrige()
     {
         int result = 0;
         int max = 0;
         for (int i = 0; i < briges.Count; i++)
         {
-            int temp = briges[i].BrickBriges.Count(n => n.Color == color);
+            int temp = briges[i].BrickBriges.Count(n => n.Color == BrickColor.Grey);
             if (max < temp)
             {
                 max = temp;
                 result = i;
             }
+
         }
-        return result == 0 ? RandomBrige() : result;
+        return result == 0 ? RandomBrigeIndex() : result;
     }
     public void SetActiveBrick(BrickColor brickColor, bool status)
     {
         foreach (var item in bricks.Where(n => n.Color == brickColor))
         {
             item.gameObject.SetActive(status);
+        }
+    }
+    public void RemoveBrigeByIsLock()
+    {
+        for (int i = briges.Count - 1; i >= 0; i--)
+        {
+            if (briges[i].IsLock)
+                briges.RemoveAt(i);
         }
     }
 }
